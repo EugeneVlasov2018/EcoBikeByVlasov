@@ -9,5 +9,13 @@ import static ua.vlasoveugene.ecobikebyvlasov.utils.BikeFileReader.prepareInMemo
 
 @Data
 public class InMemoryDB {
-    private List<Bike> bikes = prepareInMemoryDb();
+    private List<? extends Bike> bikes;
+
+    public InMemoryDB() {
+        bikes = prepareInMemoryDb();
+    }
+
+    public InMemoryDB(List<? extends Bike> bikes) {
+        this.bikes = bikes;
+    }
 }

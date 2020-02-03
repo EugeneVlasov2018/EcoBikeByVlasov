@@ -1,28 +1,22 @@
 package ua.vlasoveugene.ecobikebyvlasov.view;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@Builder
 public class SpeedBike extends Bike {
-    public SpeedBike(String bikeType,
-                     String brand,
-                     int countOfGears,
-                     int wheelSize,
-                     int weight,
-                     boolean forwardBackLight,
-                     int maxSpeed,
-                     int batteryCapacity,
-                     String color,
-                     BigDecimal price) {
+    protected String bikeType;
+    protected String brand;
+    protected int maxSpeed;
+    protected int weight;
+    protected boolean forwardBackLight;
+    protected int batteryCapacity;
+    protected String color;
+    protected BigDecimal price;
 
-        super(bikeType, brand, countOfGears,
-                wheelSize, weight, forwardBackLight,
-                maxSpeed, batteryCapacity, color, price);
-    }
 }

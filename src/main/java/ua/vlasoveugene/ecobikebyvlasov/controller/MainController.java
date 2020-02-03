@@ -13,6 +13,10 @@ public class MainController {
     private final String GREETINGS = "Dear user, welcome to our SUPERBIKESHOP!\n Please, choose command from list:";
     private ConsoleModel model;
 
+    public MainController() {
+        model = new ConsoleModel();
+    }
+
     public void beginWork() {
         System.out.println(GREETINGS);
     }

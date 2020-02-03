@@ -1,7 +1,5 @@
 package ua.vlasoveugene.ecobikebyvlasov.view;
 
-import lombok.Builder;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;

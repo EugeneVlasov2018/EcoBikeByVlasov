@@ -1,6 +1,8 @@
 package ua.vlasoveugene.ecobikebyvlasov.utils;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import ua.vlasoveugene.ecobikebyvlasov.exceptions.UnknowBikeException;
 import ua.vlasoveugene.ecobikebyvlasov.view.Bike;
 import ua.vlasoveugene.ecobikebyvlasov.view.EBike;
 import ua.vlasoveugene.ecobikebyvlasov.view.FoldingBike;
@@ -16,15 +18,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Data
+@EqualsAndHashCode
 public class BikeFileReader {
     private static final String FILENAME = "src/main/resources/ecobike.txt";
     private static final String FILE_NOT_FOUND = "Sorry, boyz, no bananaz(( Some bastards stole all our bikes";
     private static final String IOEXCEPTION ="Ooooops, something goes wrong. The cause is %s";
+    private static final String UNKNOW_BIKE = "Sorry man, but some row in your file is not a bike(";
     private static final List<String> FILE = getReadedFile();
 
-    public static List<Bike> prepareInMemoryDb(){
+    public static List<? extends Bike> prepareInMemoryDb(){
         return FILE.stream()
-                .map(currentrow -> parseRowToBike(currentrow))
+                .map(BikeFileReader::parseRowToBike)
                 .collect(Collectors.toList());
     }
 
@@ -44,26 +48,25 @@ public class BikeFileReader {
     }
 
     private static Bike parseRowToBike(String currentRowFromFile) {
-        Bike result;
         if(currentRowFromFile.contains("SPEEDELEC")){
-            result = getSpeedBike(currentRowFromFile);
+            return getSpeedBike(currentRowFromFile);
         } else if (currentRowFromFile.contains("FOLDING BIKE")){
-            result = getFoldingBike(currentRowFromFile);
+            return getFoldingBike(currentRowFromFile);
         } else if (currentRowFromFile.contains("E-BIKE")){
-            result = getEBike(currentRowFromFile);
+            return getEBike(currentRowFromFile);
         } else {
-            result = null;
+            throw new UnknowBikeException(UNKNOW_BIKE);
         }
-        return result;
     }
 
-    private static Bike getEBike(String currentRowFromFile) {
+    private static EBike getEBike(String currentRowFromFile) {
         String[] params = currentRowFromFile.split("; ");
-        String typeOfByke = params[1].split(" ")[1];
+        String typeOfBike = params[1].split(" ")[1];
         String brand = params[1].split(" ")[2];
-        return EBike.builder()
+        return EBike
+                .builder()
                 .brand(brand)
-                .bikeType(typeOfByke)
+                .bikeType(typeOfBike)
                 .maxSpeed(Integer.parseInt(params[2]))
                 .weight(Integer.parseInt(params[3]))
                 .forwardBackLight(Boolean.parseBoolean(params[4].toLowerCase()))
@@ -73,11 +76,36 @@ public class BikeFileReader {
                 .build();
     }
 
-    private static Bike getFoldingBike(String currentRowFromFile) {
-        return null;
+    private static FoldingBike getFoldingBike(String currentRowFromFile) {
+        String[] params = currentRowFromFile.split("; ");
+        String typeOfBike = params[1].split(" ")[1];
+        String brand = params[1].split(" ")[2];
+        return FoldingBike
+                .builder()
+                .bikeType(typeOfBike)
+                .brand(brand)
+                .wheelSize(Integer.parseInt(params[2]))
+                .weight(Integer.parseInt(params[3]))
+                .forwardBackLight(Boolean.parseBoolean(params[4].toLowerCase()))
+                .color(params[5])
+                .price(new BigDecimal(params[6]))
+                .build();
     }
 
-    private static Bike getSpeedBike(String currentRowFromFile) {
-        return null;
+    private static SpeedBike getSpeedBike(String currentRowFromFile) {
+        String[] params = currentRowFromFile.split("; ");
+        String typeOfByke = params[1].split(" ")[1];
+        String brand = params[1].split(" ")[2];
+        return SpeedBike
+                .builder()
+                .bikeType(typeOfByke)
+                .brand(brand)
+                .maxSpeed(Integer.parseInt(params[2]))
+                .weight(Integer.parseInt(params[3]))
+                .forwardBackLight(Boolean.parseBoolean(params[4]))
+                .batteryCapacity(Integer.parseInt(params[5]))
+                .color(params[6])
+                .price(new BigDecimal(params[7]))
+                .build();
     }
 }
